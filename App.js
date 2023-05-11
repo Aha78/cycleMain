@@ -2,23 +2,24 @@ import { StyleSheet, Text, View } from "react-native";
 import { Router, Route, Link } from "./react-router";
 
 const Home = () => <Text>Home</Text>;
-
-const About = () => <Text>About</Text>;
-
+const Antto = () => <Text>Antto</Text>;
+const About = () => <Text>A</Text>;
+const Test = () => <Text>B</Text>;
 const App = () => (
   <Router>
     <View style={styles.container}>
       <View style={styles.nav}>
         <Link to="/">
-          <Text>Home</Text>
+          <Text>Stationlist</Text>
         </Link>
-        <Link to="/about">
-          <Text>About</Text>
+                <Link to="/test">
+                    <Text>Stationdetails</Text>
         </Link>
       </View>
 
       <Route exact path="/" component={Home} />
-      <Route path="/about" component={About} />
+            <Route path="/about" component={About} />
+            <Route path="/test" component={Test} />
     </View>
   </Router>
 );
