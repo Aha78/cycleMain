@@ -1,72 +1,41 @@
-import { StyleSheet, Text, View,FlatList } from "react-native";
+import { StyleSheet, Text, View,FlatList,Button } from "react-native";
 import { Router, Route, Link } from "./react-router";
+import { useLocation } from 'react-router-dom'
 
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    title: 'First Item',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-    title: 'Second Item',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145571e29d72',
-    title: 'Third Item',
-  },
-];
-const Home = () =>
-    <View style={styles.container}>
-    <FlatList
-        data={[
-            { key: 'Android' }, { key: 'iOS' }, { key: 'Java' }, { key: 'Swift' }
-         
-        ]}
-        renderItem={({ item }) =>
-                <Link to="/stationDetails"><Text style={styles.item}>{item.key}</Text></Link>}
-        ItemSeparatorComponent={this.renderSeparator}
-    />
-</View>;
-const StationDetails = () =>
-    <View style={styles.container}>
-        <Text>StationDetails</Text>
-        <Text>Station name</Text>
-        <Text>Total number of debarting journeys</Text>
-        <Text>Total number of return journeys</Text>
-        <Text>Map</Text>
-    </View>;
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-const About = () => <Text>A</Text>;
-const Test = () => <Text>B</Text>;
-const App = () => (
-  <Router>
-    <View style={styles.container}>
-      <View style={styles.nav}>
-        <Link to="/">
-          <Text>Stationlist</Text>
-        </Link>
-       <Link to="/stationDetails">
-           <Text>Stationdetails</Text>
-        </Link>
-      </View>
 
-      <Route exact path="/" component={Home} />
-            <Route path="/about" component={About} />
-            <Route path="/test" component={Test} />
-            <Route path="/stationDetails" component={StationDetails} />
-    </View>
-  </Router>
-);
+//demo, which I use as template to app
+// https://reactnative.dev/docs/navigation
+const Stack = createNativeStackNavigator();
 
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 25,
-    padding: 10,
-  },
-  nav: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-});
-
-export default App;
+const MyStack = () => {
+    return (
+        <NavigationContainer>
+            <Stack.Navigator>
+                <Stack.Screen
+                    name="Home"
+                    component={HomeScreen}
+                    options={{ title: 'Welcome' }}
+                />
+                <Stack.Screen name="Profile" component={ProfileScreen} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
+};
+const HomeScreen = ({ navigation }) => {
+    return (
+        <Button
+            title="Go to Jane's profile"
+            onPress={() =>
+                navigation.navigate('Profile', { name: '1' })
+            }
+        />
+    );
+};
+const ProfileScreen = ({ navigation, route }) => {
+    return <Text>This is {route.params.name}'s profile</Text>;
+};
+export default MyStack;
