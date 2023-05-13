@@ -17,25 +17,34 @@ const MyStack = () => {
             <Stack.Navigator>
                 <Stack.Screen
                     name="Home"
-                    component={HomeScreen}
+                    component={Home}
                     options={{ title: 'Welcome' }}
                 />
-                <Stack.Screen name="Profile" component={ProfileScreen} />
+                <Stack.Screen name="StationDetails" component={StadionDetails} />
             </Stack.Navigator>
         </NavigationContainer>
     );
 };
-const HomeScreen = ({ navigation }) => {
+const Home = ({ navigation }) => {
     return (
         <Button
-            title="Go to Jane's profile"
+            title="Stations details"
             onPress={() =>
-                navigation.navigate('Profile', { name: '1' })
+                navigation.navigate('StationDetails', { name: '1' })
             }
         />
     );
 };
-const ProfileScreen = ({ navigation, route }) => {
-    return <Text>This is {route.params.name}'s profile</Text>;
+const StadionDetails = ({ navigation, route }) => {
+
+    return <View>
+        <Text>Stationdetails</Text>
+        <Text>Station's name</Text>
+        <Text>Station's address</Text>
+        <Text>Station's total number of debarture journeys</Text>
+        <Text>Station's total number of returns journeys</Text>
+        <Text>This is {route.params.name}'s profile</Text>
+        
+        </View>;
 };
 export default MyStack;
