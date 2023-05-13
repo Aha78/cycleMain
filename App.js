@@ -54,12 +54,12 @@ const Home = ({ navigation }) => {
         keyExtractor={item => item.id}
       />
  <View style={{flexGrow: 1,  flexDirection: 'row', justifyContent:'center', alignItems: 'center'}}>
-<TouchableHighlight >
+<TouchableHighlight  onPress={()=>alert('jes')}>
 <Icon
   name='arrow-left'size={80} />
   </TouchableHighlight>
   <Text>3</Text>
-  <TouchableHighlight >
+  <TouchableHighlight onPress={()=>alert('jes1')} >
   <Icon
   name='arrow-right' size={80} />
   </TouchableHighlight>
