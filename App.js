@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View,FlatList,Button } from "react-native";
+import { StyleSheet, Text, View,FlatList,Button ,TouchableHighlight} from "react-native";
 import { Router, Route, Link } from "./react-router";
 import { useLocation } from 'react-router-dom'
 
@@ -6,10 +6,30 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+import { Icon } from 'react-native-elements'
 
 //demo, which I use as template to app
 // https://reactnative.dev/docs/navigation
 const Stack = createNativeStackNavigator();
+
+const DATA = [
+    {
+      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
+      title: 'First Item',
+    },
+    {
+      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
+      title: 'Second Item',
+    },
+    {
+      id: '58694a0f-3da1-471f-bd96-145571e29d72',
+      title: 'Third Item',
+    },
+  ];
+  
+
+  
+
 
 const MyStack = () => {
     return (
@@ -27,12 +47,33 @@ const MyStack = () => {
 };
 const Home = ({ navigation }) => {
     return (
-        <Button
+        <View>
+      <FlatList
+        data={DATA}
+        renderItem={({item}) =><Text >{item.title}</Text>}
+        keyExtractor={item => item.id}
+      />
+ <View style={{flexGrow: 1,  flexDirection: 'row', justifyContent:'center', alignItems: 'center'}}>
+<TouchableHighlight >
+<Icon
+  name='arrow-left'size={80} />
+  </TouchableHighlight>
+  <Text>3</Text>
+  <TouchableHighlight >
+  <Icon
+  name='arrow-right' size={80} />
+  </TouchableHighlight>
+</View>
+   
+            <Button
             title="Stations details"
             onPress={() =>
                 navigation.navigate('StationDetails', { name: '1' })
             }
         />
+
+        </View>
+  
     );
 };
 const StadionDetails = ({ navigation, route }) => {
@@ -48,3 +89,18 @@ const StadionDetails = ({ navigation, route }) => {
         </View>;
 };
 export default MyStack;
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1
+    },
+    item: {
+      backgroundColor: '#f9c2ff',
+      padding: 20,
+      marginVertical: 8,
+      marginHorizontal: 16,
+    },
+    title: {
+      fontSize: 32,
+    },
+  });
