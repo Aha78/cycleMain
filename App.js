@@ -36,16 +36,15 @@ const MyStack = () => {
 
 const Home =  ({ navigation }) => {
     const [advice, Setadvice] = useState(null);
-    axios.get("http://192.168.1.3:7077/api/Stations?page=1")
+    const [page, SetPage] = useState(1);
+    axios.get("http://192.168.1.3:7077/api/Stations?page=" + page)
 
         .then(resp => resp.data)
         .then(resp => Setadvice(resp))
         
         .catch(resp=>console.log(resp));
 
-    state = {
-        Data: 'This is a text component, created using state data. It will change or updated on clicking it.'
-    }  
+
 
  
 
@@ -60,12 +59,12 @@ const Home =  ({ navigation }) => {
                 <View style={{ flexGrow: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                 
 
-                    <TouchableHighlight onPress={() => alert('jes')}>
+                    <TouchableHighlight onPress={() => SetPage(page - 1)}>
                         <Icon
                             name='arrow-left' size={80} />
                     </TouchableHighlight>
-                    <Text>1</Text>
-                    <TouchableHighlight onPress={() => alert('jes1')} >
+                    <Text>{ page} </Text>
+                    <TouchableHighlight onPress={() => SetPage(page + 1)} >
                         <Icon
                             name='arrow-right' size={80} />
                     </TouchableHighlight>
