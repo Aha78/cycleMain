@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View,FlatList,Button ,TouchableHighlight} from "react-native";
+import { StyleSheet, Text, View, FlatList, Button,Dimensions,TouchableHighlight} from "react-native";
 import { Router, Route, Link } from "./react-router";
 import { useLocation } from 'react-router-dom'
 import axios from 'axios';
@@ -8,7 +8,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useState } from "react"; 
 import { Icon, Card } from 'react-native-elements';
 import { DataTable } from 'react-native-paper';
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 
 const Stack = createNativeStackNavigator();
 
@@ -39,11 +39,32 @@ const MyStack = () => {
     );
 };
 
-const Map = ({ }) => {
+const Map = ({route }) => {
+    const { width, height } = Dimensions.get('window');
+
+    const ASPECT_RATIO = width / height;
+    const LATITUDE = route.params.lat;
+    const LONGITUDE = route.params.lon;
+    const LATITUDE_DELTA = 0.0222;
+    const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO / 2;
+
+    this.state = {
+        region: {
+            latitude: route.params.lat - LATITUDE_DELTA/2 ,
+            longitude: route.params.lon ,
+            latitudeDelta: LATITUDE_DELTA + LATITUDE_DELTA/2,
+            longitudeDelta: LONGITUDE_DELTA + LONGITUDE_DELTA,
+        },
+        markers: [],
+    };
 
     return  (
         <View style={styles.container}>
-            <MapView style={styles.map} />
+            <MapView style={styles.map} initialRegion={this.state.region} >
+                <Marker coordinate={{ latitude: LATITUDE, longitude: LONGITUDE }}
+                    pinColor={"red"} 
+                    />
+            </MapView>
         </View>)
 }
 
@@ -94,7 +115,6 @@ const Journeys = ({  }) => {
                             </Text>
                             </View>
                             <View style={{ flexGrow: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-
                                 <Text style={{ textAlign: 'left' }}>
                                     Duration {item.duration}
                                 </Text>
@@ -130,12 +150,6 @@ const Home =  ({ navigation }) => {
     if (advice != null) {
         return (
             <View>
-                <FlatList
-                    data={advice}
-                    renderItem={({ item }) => <TouchableHighlight onPress={() => navigation.navigate('StationDetails', { name: item.id })}><Text
-                        styles={{ fontSize: 40 }}>{item.Name}</Text></TouchableHighlight>}
-                    keyExtractor={item => item.id}
-                />
                 <View style={{ flexGrow: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
 
                     <TouchableHighlight onPress={() => {
@@ -146,7 +160,7 @@ const Home =  ({ navigation }) => {
                         <Icon
                             name='arrow-left' size={80} />
                     </TouchableHighlight>
-                    <Text>{ page} </Text>
+                    <Text style={[styles.setFontSize]}>{page} </Text>
                     <TouchableHighlight onPress={() => {
                         Setadvice(null);
                         SetPage(page + 1);
@@ -158,12 +172,14 @@ const Home =  ({ navigation }) => {
                     </TouchableHighlight>
                 </View>
 
-           
-
+                <FlatList
+                    data={advice}
+                    renderItem={({ item }) => <Card><TouchableHighlight onPress={() => navigation.navigate('StationDetails', { name: item.id })}><Text
+                        style={[styles.setFont]}>{item.Name}</Text></TouchableHighlight></Card>}
+                    keyExtractor={item => item.id}
+                />
             </View>
-
         );
-
     }
     else return (
         <View>
@@ -171,9 +187,6 @@ const Home =  ({ navigation }) => {
         </View>
 
     );
-
-
-
 };
 const StadionDetails = ({ navigation, route }) => {
     const [details, Setdetails] = useState(null);
@@ -185,41 +198,44 @@ const StadionDetails = ({ navigation, route }) => {
     
     if (details != null) {
         return <View>
-            <Text>Stationdetails </Text>
-            <TouchableHighlight onPress={() => navigation.navigate('Journeys')} >
-                <Text>Journeys</Text>
-            </TouchableHighlight>
+            <Text style={[styles.setFontSize]}>Stationdetails </Text>
+          
+            <Card style={[styles.setFontSize, styles.setColorPink]}>
 
-            <TouchableHighlight onPress={() => navigation.navigate('Map')} >
-                <Text>Map</Text>
-            </TouchableHighlight>
-
-            <DataTable style={styles.container}>
+                <DataTable >
                 
                 <DataTable.Row>
-                    <DataTable.Cell>Station's name</DataTable.Cell>
+                        <DataTable.Cell><Text style={[styles.cellSize]}>Station's name</Text></DataTable.Cell>
                     <DataTable.Cell>{details.Name}</DataTable.Cell>
                   
                 </DataTable.Row>
 
-                <DataTable.Row>
-                    <DataTable.Cell>Station's address</DataTable.Cell>
+                    <DataTable.Row>
+                        <DataTable.Cell style={[styles.setFontSize]}><Text style={[styles.cellSize]}>Station's address</Text></DataTable.Cell>
                     <DataTable.Cell>{details.Address}</DataTable.Cell>
                     
                 </DataTable.Row>                            
-                <DataTable.Row>
-                    <DataTable.Cell>debarture journeys</DataTable.Cell>
+                    <DataTable.Row>
+                        <DataTable.Cell><Text style={[styles.cellSize]}>debarture journeys</Text></DataTable.Cell>
                     <DataTable.Cell>{details.NumDeb}</DataTable.Cell>
           
                 </DataTable.Row>
                 <DataTable.Row>
-                    <DataTable.Cell>returns journeys </DataTable.Cell>
+                        <DataTable.Cell><Text style={[styles.cellSize]}>returns journeys</Text></DataTable.Cell>
                     <DataTable.Cell>{details.NumEnd}</DataTable.Cell>
 
                 </DataTable.Row>
           
             </DataTable>
-          
+            </Card>
+
+            <TouchableHighlight onPress={() => navigation.navigate('Journeys')} >
+                <Text style={[styles.cellSize]}>Journeys</Text>
+            </TouchableHighlight>
+
+            <TouchableHighlight onPress={() => navigation.navigate('Map', { lat: details.Lat, lon: details.Lon })} >
+                <Text style={[styles.cellSize]}>Map</Text>
+            </TouchableHighlight>
             
         </View>;
     }
@@ -243,6 +259,16 @@ const styles = StyleSheet.create({
         height: '100%',
     },
 
+    height: {
+       
+        height: '200px',
+    },
+        cellSize: {
+
+            fontSize: 16,
+            fontWeight: 'bold'
+    },
+
     tableHeader: {
         backgroundColor: '#DCDCDC',
     },
@@ -254,5 +280,27 @@ const styles = StyleSheet.create({
     },
     title: {
       fontSize: 32,
+    },
+
+    setFont: {
+        fontSize: 25,
+        fontWeight: 'bold',
+        margin : 10
+    },
+    setFontSize: {
+        fontSize: 32,
+        fontWeight: 'bold'
+    },
+    setColorRed: {
+        color: '#f44336'
+    },
+    setColorPink: {
+        color: '#e91e63'
+    },
+    setColorPurple: {
+        color: '#9c27b0'
+    },
+    setColorBlue: {
+        color: '#2196f3'
     },
   });
