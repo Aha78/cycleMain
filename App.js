@@ -6,10 +6,10 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useState } from "react"; 
-import { Icon } from 'react-native-elements'
+import { Icon } from 'react-native-elements';
+import { DataTable } from 'react-native-paper';
 
-//demo, which I use as template to app
-// https://reactnative.dev/docs/navigation
+
 const Stack = createNativeStackNavigator();
 
 
@@ -37,7 +37,7 @@ const MyStack = () => {
 const Home =  ({ navigation }) => {
     const [advice, Setadvice] = useState(null);
     const [page, SetPage] = useState(1);
-    axios.get("http://192.168.1.3:7077/api/Stations?page=" + page)
+    axios.get("http://192.168.1.2:7077/api/Stations?page=" + page)
 
         .then(resp => resp.data)
         .then(resp => Setadvice(resp))
@@ -53,13 +53,13 @@ const Home =  ({ navigation }) => {
             <View>
                 <FlatList
                     data={advice}
-                    renderItem={({ item }) => <TouchableHighlight onPress={() => alert('jes')}><Text >{item.Name}</Text></TouchableHighlight>}
+                    renderItem={({ item }) => <TouchableHighlight onPress={() => navigation.navigate('StationDetails', { name: item.id })}><Text >{item.Name}</Text></TouchableHighlight>}
                     keyExtractor={item => item.id}
                 />
                 <View style={{ flexGrow: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                 
 
-                    <TouchableHighlight onPress={() => SetPage(page - 1)}>
+                    <TouchableHighlight onPress={() => SetPage(page>0?page:page1)}>
                         <Icon
                             name='arrow-left' size={80} />
                     </TouchableHighlight>
@@ -70,12 +70,7 @@ const Home =  ({ navigation }) => {
                     </TouchableHighlight>
                 </View>
 
-                <Button
-                    title="Stations details"
-                    onPress={() =>
-                        navigation.navigate('StationDetails', { name: '1' })
-                    }
-                />
+           
 
             </View>
 
@@ -93,22 +88,64 @@ const Home =  ({ navigation }) => {
 
 };
 const StadionDetails = ({ navigation, route }) => {
+    const [details, Setdetails] = useState(null);
 
-    return <View>
-        <Text>Stationdetails</Text>
-        <Text>Station's name</Text>
-        <Text>Station's address</Text>
-        <Text>Station's total number of debarture journeys</Text>
-        <Text>Station's total number of returns journeys</Text>
-        <Text>This is {route.params.name}'s profile</Text>
-        
+    axios.get("http://192.168.1.2:7077/api/stationdetails?id=" + route.params.name)
+
+        .then(resp => resp.data)
+        .then(resp => Setdetails(resp))
+        .catch(resp => console.log(resp));
+    
+    if (details != null) {
+        return <View>
+            <Text>Stationdetails </Text>
+
+
+            <DataTable style={styles.container}>
+                
+                <DataTable.Row>
+                    <DataTable.Cell>Station's name</DataTable.Cell>
+                    <DataTable.Cell>{details.Name}</DataTable.Cell>
+                  
+                </DataTable.Row>
+
+                <DataTable.Row>
+                    <DataTable.Cell>Station's address</DataTable.Cell>
+                    <DataTable.Cell>{details.Address}</DataTable.Cell>
+                    
+                </DataTable.Row>
+                <DataTable.Row>
+                    <DataTable.Cell>debarture journeys</DataTable.Cell>
+                    <DataTable.Cell>{details.NumDeb}</DataTable.Cell>
+          
+                </DataTable.Row>
+                <DataTable.Row>
+                    <DataTable.Cell>returns journeys </DataTable.Cell>
+                    <DataTable.Cell>{details.NumEnd}</DataTable.Cell>
+
+                </DataTable.Row>
+          
+            </DataTable>
+           
         </View>;
+    }
+    else return (
+        <View>
+
+        </View>
+
+    );
 };
 export default MyStack;
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1
+        flex: 1,
+       padding: 15
+    },
+
+    tableHeader: {
+        backgroundColor: '#DCDCDC',
     },
     item: {
       backgroundColor: '#f9c2ff',
