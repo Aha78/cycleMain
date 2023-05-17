@@ -1,6 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Journeys",
+    "\\Main",
+    "\\Map"
   ],
+  "SelectedNode": "\\Journeys",
   "PreviewInSolutionExplorer": false
 }
